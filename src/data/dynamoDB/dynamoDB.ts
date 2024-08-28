@@ -39,10 +39,6 @@ const dynamo = DynamoDBDocumentClient.from(client, {
   },
 });
 
-// TODO: Recommendation: Avoid using any
-// TODO: investigate do we need sort key
-// TODO: pagination for list
-
 interface DbOutput {
   statusCode: number;
   data?: object;
