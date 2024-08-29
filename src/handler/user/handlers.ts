@@ -11,6 +11,10 @@ import {
   deleteUser,
   getUsers,
 } from "../../data/service/user.service";
+import { getUserGroupsByUser } from "../../data/service/userGroup.service";
+import { getGroup } from "../../data/service/group.service";
+import { Group } from "../../data/interfaces/interfaces";
+import { logger } from "../../../shared/utils/logger";
 
 // POST /users/register
 export const registerUser = async (event: APIGatewayProxyEvent) => {
@@ -76,12 +80,42 @@ export const deleteUserById = async (event: APIGatewayProxyEvent) => {
   if (!userId) {
     return new BadRequestError("Invalid path parameter").response();
   }
+
   const response = await deleteUser(userId);
   if (response.statusCode === 500) {
     return new UnexpectedError(response.errorMessage).response();
   }
+
   return Response(204);
 };
+
+// GET /users/{userId}/groups
+export const getUserGroups = async (event: APIGatewayProxyEvent) => {
+  const userId = event.pathParameters?.userId;
+  if (!userId) {
+    return new BadRequestError("Invalid path parameter").response();
+  }
+
+  const response = await getUserGroupsByUser(userId);
+  if (response.statusCode === 500) {
+    return new UnexpectedError(response.errorMessage).response();
+  }
+
+  const userPromise = response.userGroups?.map(async (userGroup) => {
+    const groupResponse = await getGroup(userGroup.groupId);
+    if (groupResponse.group) {
+      return groupResponse.group;
+    }
+    return null;
+  });
+
+  const userGroupsResults = userPromise ? await Promise.all(userPromise) : [];
+  const userGroups = userGroupsResults.filter((group) => group !== null);
+
+  return Response(200, { userGroups });
+};
+
+//
 
 // GET /users For Admin and Dev
 export const getAllUsers = async (event: APIGatewayProxyEvent) => {
