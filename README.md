@@ -203,3 +203,39 @@ Then you can find there is an output in your local console about your api inform
      - `limit`: Number of messages to retrieve.
      - `groupId`: The ID of the group to which the thread belongs.
    - **Response:** Thread object with message list.
+
+### WebSocket Link
+
+1. **Connect**
+
+   - **Handler Function:** `connectToWss`
+   - **Description:** Handles the connection of a user to the WebSocket.
+   - **Event Type:** `APIGatewayProxyEvent`
+   - **Process:**
+     - Validates `userId` and `token` from the request body.
+     - Retrieves the user by `userId`.
+     - Updates the user with the WebSocket connection ID (`wssId`).
+     - Returns a success response if the connection is successful.
+
+2. **Disconnect**
+
+   - **Handler Function:** `disconnectToWss`
+   - **Description:** Handles the disconnection of a user from the WebSocket.
+   - **Event Type:** `APIGatewayProxyEvent`
+   - **Process:**
+     - Retrieves the user by the WebSocket connection ID (`wssId`).
+     - Removes the WebSocket connection ID from the user data.
+     - Returns a success response if the disconnection is successful.
+
+3. **Default**
+   - **Handler Function:** `sendMessage`
+   - **Description:** Handles sending messages between users in a thread.
+   - **Event Type:** `APIGatewayProxyEvent`
+   - **Process:**
+     - Validates `threadId`, `userId`, `message`, and `groupId` from the request body.
+     - Retrieves the thread and group by their IDs.
+     - Retrieves the user by `userId`.
+     - Creates a new message in the thread.
+     - Updates the `lastMessageAt` timestamp for the thread and group.
+     - Retrieves all users in the group and sends the message to all connected users.
+     - Returns a success response after the message is successfully sent.
