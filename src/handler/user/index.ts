@@ -40,10 +40,8 @@ const userHandler = async (event: APIGatewayProxyEvent) => {
       return await updateUserPasswordById(event); // /users/{userId}/password
     case "DELETE":
       return await deleteUserById(event);
-      break;
     case "OPTIONS":
       return Response(200, {});
-      break;
     default:
       return new NotImplementedError("Not implemented").response();
   }

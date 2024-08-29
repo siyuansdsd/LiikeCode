@@ -51,7 +51,6 @@ const groupHandler = async (event: APIGatewayProxyEvent) => {
       break;
     case "OPTIONS":
       return Response(200, {});
-      break;
     default:
       return new NotImplementedError("Not implemented").response();
   }
