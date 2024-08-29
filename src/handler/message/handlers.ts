@@ -165,4 +165,6 @@ export const sendMessage = async (event: APIGatewayProxyEvent) => {
         });
     }
   });
+
+  return Response(200);
 };

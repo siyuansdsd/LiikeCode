@@ -34,9 +34,7 @@ export const registerUser = async (event: APIGatewayProxyEvent) => {
   if (getResponse.user) {
     return new ConflictError("User already exists").response();
   }
-  if (getResponse.statusCode === 500) {
-    return new UnexpectedError(getResponse.errorMessage).response();
-  }
+
   const createResponse = await createUser(
     userName,
     email,
@@ -65,9 +63,6 @@ export const loginUser = async (event: APIGatewayProxyEvent) => {
   if (!getResponse.user) {
     return new BadRequestError("User not found").response();
   }
-  if (getResponse.statusCode === 500) {
-    return new UnexpectedError(getResponse.errorMessage).response();
-  }
   if (getResponse.user.password !== password) {
     return new BadRequestError("Invalid password").response();
   }
@@ -85,7 +80,6 @@ export const deleteUserById = async (event: APIGatewayProxyEvent) => {
   if (response.statusCode === 500) {
     return new UnexpectedError(response.errorMessage).response();
   }
-
   return Response(204);
 };
 
@@ -97,8 +91,9 @@ export const getUserGroups = async (event: APIGatewayProxyEvent) => {
   }
 
   const response = await getUserGroupsByUser(userId);
-  if (response.statusCode === 500) {
-    return new UnexpectedError(response.errorMessage).response();
+
+  if (!response.userGroups) {
+    return Response(200, { userGroups: [] });
   }
 
   const userPromise = response.userGroups?.map(async (userGroup) => {

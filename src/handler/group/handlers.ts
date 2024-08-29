@@ -138,7 +138,7 @@ export const addUserToGroup = async (event: APIGatewayProxyEvent) => {
   return Response(201, { userGroup: userGroupResponse.userGroup });
 };
 
-// GET /groups/{groupId}/threads  order by last message
+// GET /groups/{groupId}/threads/latest  order by last message
 export const getGroupsThreadByLastMessage = async (
   event: APIGatewayProxyEvent
 ) => {
@@ -171,8 +171,8 @@ export const getAllGroups = async (event: APIGatewayProxyEvent) => {
   if (response.statusCode === 500) {
     return new UnexpectedError(response.errorMessage).response();
   }
-  if (!response.groups) {
-    return Response(200, { groups: [] });
+  if (response.groups instanceof Array && response.groups.length > 0) {
+    return Response(200, { groups: response.groups });
   }
-  return Response(200, { groups: response.groups });
+  return Response(200, { groups: [] });
 };
