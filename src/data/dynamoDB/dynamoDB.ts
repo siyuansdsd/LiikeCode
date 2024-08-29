@@ -41,8 +41,9 @@ const dynamo = DynamoDBDocumentClient.from(client, {
 
 interface DbOutput {
   statusCode: number;
-  data?: object;
+  Item?: Record<string, unknown>;
   errorMessage?: string;
+  Items?: Record<string, unknown>[];
 }
 
 export default class DynamoDB {
@@ -82,7 +83,7 @@ export default class DynamoDB {
       logger.info("[DB] dbGet: " + JSON.stringify(response));
       return {
         statusCode: response.$metadata.httpStatusCode || 200,
-        data: [response.Item],
+        Item: response.Item,
       };
     } catch (error) {
       return {
@@ -99,7 +100,7 @@ export default class DynamoDB {
       logger.info("[DB] dbScan: " + JSON.stringify(response));
       return {
         statusCode: response.$metadata.httpStatusCode || 200,
-        data: response.Items,
+        Items: response.Items,
       };
     } catch (error) {
       return {
@@ -116,7 +117,7 @@ export default class DynamoDB {
       logger.info("[DB] dbQuery: " + JSON.stringify(response));
       return {
         statusCode: response.$metadata.httpStatusCode || 200,
-        data: response.Items,
+        Items: response.Items,
         id: response.$metadata.requestId,
       };
     } catch (error) {

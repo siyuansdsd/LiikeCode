@@ -13,7 +13,7 @@ export interface User extends DynamoDBItem {
   email: string;
   password: string;
   dateOfBirth: string;
-  userCreatedAt: string;
+  createdAt: number;
   userImageUrl?: string;
 }
 
@@ -23,7 +23,7 @@ export interface Group extends DynamoDBItem {
   SK: "METADATA";
   groupId: string;
   groupName: string;
-  createdAt: string;
+  createdAt: number;
   emoticon: string;
   lastMessageAt?: string;
 }
@@ -34,7 +34,7 @@ export interface UserGroup extends DynamoDBItem {
   SK: `GROUP#${string}`;
   userId: string;
   groupId: string;
-  joinedAt: string;
+  joinedAt: number;
 }
 
 // Thread entity interface
@@ -42,8 +42,10 @@ export interface Thread extends DynamoDBItem {
   PK: `GROUP#${string}`;
   SK: `THREAD#${string}`;
   threadId: string;
+  groupId: string;
   threadName: string;
-  createdAt: string;
+  createdAt: number;
+  lastMessageAt?: number;
   color: string;
 }
 
@@ -54,7 +56,7 @@ export interface Message extends DynamoDBItem {
   messageId: string;
   content: string;
   senderUserId: string;
-  createdAt: string;
+  createdAt: number;
   GSI1PK: `GROUP#${string}`; // GSI1 PK（Based on group ID）
   GSI1SK: `THREAD#${string}#MESSAGE#${string}`; // GSI1 SK（Based on Thread ID and MessageID）
 }

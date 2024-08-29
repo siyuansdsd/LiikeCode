@@ -1,20 +1,29 @@
-import { DynamoDB } from "aws-sdk";
 import { User } from "../interfaces/interfaces";
 
-export const userFromItem = (item: DynamoDB.AttributeMap): User => {
-  if (!item) {
-    throw new Error("Item is undefined");
+export const userFromItem = (item: Record<string, any>): User => {
+  if (
+    !item.PK ||
+    !item.SK ||
+    !item.userId ||
+    !item.userName ||
+    !item.email ||
+    !item.password ||
+    !item.dateOfBirth ||
+    !item.createdAt
+  ) {
+    throw new Error("Invalid item format");
   }
+
   return {
-    PK: item.pk.S! as User["PK"],
-    SK: item.sk.S! as User["SK"],
-    userName: item.userName.S!,
-    userId: item.userId.S!,
-    email: item.email.S!,
-    password: item.password.S!,
-    dateOfBirth: item.dateOfBirth.S!,
-    userCreatedAt: item.userCreatedAt.S!,
-    userImageUrl: item.userImageUrl?.S,
+    PK: item.PK as `USER#${string}`,
+    SK: "PROFILE",
+    userId: item.userId as string,
+    userName: item.userName as string,
+    email: item.email as string,
+    password: item.password as string,
+    dateOfBirth: item.dateOfBirth as string,
+    createdAt: Number(item.createdAt),
+    userImageUrl: item.userImageUrl as string | undefined,
   };
 };
 
@@ -26,7 +35,7 @@ export const userToItem = (user: User): Record<string, unknown> => {
     email: { S: user.email },
     password: { S: user.password },
     dateOfBirth: { S: user.dateOfBirth },
-    userCreatedAt: { S: user.userCreatedAt },
+    createdAt: { N: user.createdAt.toString() },
     userImageUrl: user.userImageUrl ? { S: user.userImageUrl } : undefined,
   };
 };

@@ -1,17 +1,27 @@
-import { DynamoDB } from "aws-sdk";
 import { Thread } from "../interfaces/interfaces";
 
-export const threadFromItem = (item: DynamoDB.AttributeMap): Thread => {
-  if (!item) {
-    throw new Error("Item is undefined");
+export const threadFromItem = (item: Record<string, any>): Thread => {
+  if (
+    !item.PK ||
+    !item.SK ||
+    !item.threadId ||
+    !item.threadName ||
+    !item.groupId ||
+    !item.color ||
+    !item.createdAt
+  ) {
+    throw new Error("Invalid item format");
   }
+
   return {
-    PK: item.pk.S! as Thread["PK"],
-    SK: item.sk.S! as Thread["SK"],
-    threadId: item.threadId.S!,
-    threadName: item.threadName.S!,
-    color: item.color.S!,
-    createdAt: item.threadCreatedAt.S!,
+    PK: item.PK as `GROUP#${string}`,
+    SK: item.SK as `THREAD#${string}`,
+    threadId: item.threadId as string,
+    threadName: item.threadName as string,
+    lastMessageAt: item.lastMessageAt as number | undefined,
+    groupId: item.groupId as string,
+    color: item.color as string,
+    createdAt: Number(item.createdAt),
   };
 };
 
@@ -21,7 +31,11 @@ export const threadToItem = (thread: Thread): Record<string, unknown> => {
     sk: { S: thread.SK },
     threadId: { S: thread.threadId },
     threadName: { S: thread.threadName },
+    groupId: { S: thread.groupId },
     color: { S: thread.color },
-    threadCreatedAt: { S: thread.createdAt },
+    createdAt: { N: thread.createdAt.toString() },
+    lastMessageAt: thread.lastMessageAt
+      ? { N: thread.lastMessageAt.toString() }
+      : undefined,
   };
 };

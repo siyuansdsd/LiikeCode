@@ -1,16 +1,16 @@
-import { DynamoDB } from "aws-sdk";
 import { UserGroup } from "../interfaces/interfaces";
 
-export const userGroupFromItem = (item: DynamoDB.AttributeMap): UserGroup => {
-  if (!item) {
-    throw new Error("Item is undefined");
+export const userGroupFromItem = (item: Record<string, any>): UserGroup => {
+  if (!item.pk || !item.sk || !item.userId || !item.groupId || !item.joinedAt) {
+    throw new Error("Invalid item format");
   }
+
   return {
-    PK: item.pk.S! as UserGroup["PK"],
-    SK: item.sk.S! as UserGroup["SK"],
-    userId: item.userId.S!,
-    groupId: item.groupId.S!,
-    joinedAt: item.joinedAt.S!,
+    PK: item.pk as `USER#${string}`,
+    SK: item.sk as `GROUP#${string}`,
+    userId: item.userId as string,
+    groupId: item.groupId as string,
+    joinedAt: Number(item.joinedAt),
   };
 };
 
@@ -22,6 +22,6 @@ export const userGroupToItem = (
     sk: { S: userGroup.SK },
     userId: { S: userGroup.userId },
     groupId: { S: userGroup.groupId },
-    joinedAt: { S: userGroup.joinedAt },
+    joinedAt: { N: userGroup.joinedAt.toString() },
   };
 };

@@ -1,17 +1,24 @@
-import { DynamoDB } from "aws-sdk";
 import { Group } from "../interfaces/interfaces";
 
-export const groupFromItem = (item: DynamoDB.AttributeMap): Group => {
-  if (!item) {
-    throw new Error("Item is undefined");
+export const groupFromItem = (item: Record<string, any>): Group => {
+  if (
+    !item.PK ||
+    !item.SK ||
+    !item.groupId ||
+    !item.groupName ||
+    !item.emoticon ||
+    !item.createdAt
+  ) {
+    throw new Error("Invalid item format");
   }
+
   return {
-    PK: item.pk.S! as Group["PK"],
-    SK: item.sk.S! as Group["SK"],
-    groupId: item.groupId.S!,
-    groupName: item.groupName.S!,
-    emoticon: item.emoticon.S! as any,
-    createdAt: item.groupCreatedAt.S!,
+    PK: item.PK as `GROUP#${string}`,
+    SK: "METADATA",
+    groupId: item.groupId as string,
+    groupName: item.groupName as string,
+    emoticon: item.emoticon as string,
+    createdAt: Number(item.createdAt),
   };
 };
 
@@ -22,6 +29,6 @@ export const groupToItem = (group: Group): Record<string, unknown> => {
     groupId: { S: group.groupId },
     groupName: { S: group.groupName },
     emoticon: { S: group.emoticon },
-    createdAt: { S: group.createdAt },
+    createdAt: { N: group.createdAt.toString() },
   };
 };
