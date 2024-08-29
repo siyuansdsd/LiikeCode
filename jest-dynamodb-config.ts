@@ -1,7 +1,7 @@
 module.exports = {
   tables: [
     {
-      TableName: "DouglasChatTable",
+      TableName: "DouglasChatTableTest",
       KeySchema: [
         { AttributeName: "pk", KeyType: "HASH" }, // Partition key
         { AttributeName: "sk", KeyType: "RANGE" }, // Sort key
