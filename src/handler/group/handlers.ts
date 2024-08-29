@@ -15,7 +15,10 @@ import {
   getUserGroupsByGroup,
   createUserGroup,
 } from "../../data/service/userGroup.service";
-import { getThreadsByGroup } from "../../data/service/thread.service";
+import {
+  getThreadsByGroup,
+  getThreadsByGroupSorted,
+} from "../../data/service/thread.service";
 import { logger } from "../../../shared/utils/logger";
 
 // GET /groups/{groupId}/users
@@ -133,6 +136,31 @@ export const addUserToGroup = async (event: APIGatewayProxyEvent) => {
     return new ConflictError("User already in group").response();
   }
   return Response(201, { userGroup: userGroupResponse.userGroup });
+};
+
+// GET /groups/{groupId}/threads  order by last message
+export const getGroupsByLastMessage = async (event: APIGatewayProxyEvent) => {
+  const groupId = event.pathParameters?.groupId;
+  if (!groupId) {
+    return new BadRequestError("Invalid groupId").response();
+  }
+
+  const groupResponse = await getGroup(groupId);
+  if (groupResponse.statusCode === 500) {
+    return new UnexpectedError(groupResponse.errorMessage).response();
+  }
+  if (!groupResponse.group) {
+    return new BadRequestError("Group not found").response();
+  }
+
+  const threadsResponse = await getThreadsByGroupSorted(groupId);
+  if (threadsResponse.statusCode === 500) {
+    return new UnexpectedError(threadsResponse.errorMessage).response();
+  }
+  if (!threadsResponse.threads) {
+    return Response(200, { threads: [] });
+  }
+  return Response(200, { threads: threadsResponse.threads });
 };
 
 // GET /groups for admin and dev
