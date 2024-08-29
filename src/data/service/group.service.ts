@@ -5,6 +5,7 @@ import {
   GetCommandInput,
   DeleteCommandInput,
   QueryCommandInput,
+  ScanCommandInput,
 } from "@aws-sdk/lib-dynamodb";
 import { v4 as uuidv4 } from "uuid";
 import DynamoDB from "../dynamoDB/dynamoDB";
@@ -72,26 +73,30 @@ export const getGroup = async (
 };
 
 export const getGroups = async (): Promise<GroupServicesOutput> => {
-  const params: QueryCommandInput = {
+  const params: ScanCommandInput = {
     TableName: process.env.CHAT_TABLE!,
-    KeyConditionExpression: "sk = :sk AND begins_with(pk, :pk)",
+    FilterExpression: "sk = :sk AND begins_with(pk, :pk)",
     ExpressionAttributeValues: {
       ":pk": { S: "GROUP" },
       ":sk": { S: "METADATA" },
     },
   };
-  const response = await dynamoDB.dbQuery(params);
+
+  const response = await dynamoDB.dbScan(params);
   const result: GroupServicesOutput = {
     statusCode: response.statusCode,
   };
+
   if (response.statusCode === 500) {
     result.errorMessage = response.errorMessage;
   }
+
   if (response.Items) {
     result.groups = response.Items.map((item) =>
       groupFromItem(item as Record<string, any>)
     );
   }
+
   return result;
 };
 
