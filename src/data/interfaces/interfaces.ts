@@ -9,6 +9,7 @@ export interface User extends DynamoDBItem {
   PK: `USER#${string}`;
   SK: "PROFILE";
   userId: string;
+  wssId?: string;
   userName: string;
   email: string;
   password: string;

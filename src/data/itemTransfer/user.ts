@@ -23,6 +23,7 @@ export const userFromItem = (item: Record<string, any>): User => {
     password: item.password as string,
     dateOfBirth: item.dateOfBirth as string,
     createdAt: Number(item.createdAt),
+    wssId: item.wssId as string | undefined,
     userImageUrl: item.userImageUrl as string | undefined,
   };
 };
@@ -36,6 +37,8 @@ export const userToItem = (user: User): Record<string, unknown> => {
     password: { S: user.password },
     dateOfBirth: { S: user.dateOfBirth },
     createdAt: { N: user.createdAt.toString() },
+    userName: { S: user.userName },
+    wssId: user.wssId ? { S: user.wssId } : undefined,
     userImageUrl: user.userImageUrl ? { S: user.userImageUrl } : undefined,
   };
 };
