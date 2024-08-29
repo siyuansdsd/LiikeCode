@@ -11,6 +11,7 @@ import dotenv from "dotenv";
 dotenv.config();
 
 export const createApiGateWay = (stack: Cdk.Stack) => {
+  // lambda for http
   const lambda = new NodejsFunction(stack, "ChatHttpLambda", {
     entry: join("./.build/chat.js"),
     handler: "httpHandler",
@@ -30,6 +31,101 @@ export const createApiGateWay = (stack: Cdk.Stack) => {
 
   const api = new Apigateway.RestApi(stack, "ChatApi", {
     restApiName: "Chat Service",
+  });
+
+  // lambda for websocket
+
+  const connectionLambda = new NodejsFunction(stack, "ChatConnectionLambda", {
+    entry: join("./.build/chat.js"),
+    handler: "connectHandler",
+    runtime: Lambda.Runtime.NODEJS_18_X,
+  });
+
+  connectionLambda.addToRolePolicy(
+    new PolicyStatement({
+      effect: Effect.ALLOW,
+      actions: ["dynamodb:*"],
+      resources: [
+        `${process.env.CHAT_API_ARN as string}/index/*`,
+        `${process.env.CHAT_TABLE_ARN as string}`,
+      ],
+    })
+  );
+
+  const disconnectLambda = new NodejsFunction(stack, "ChatDisconnectLambda", {
+    entry: join("./.build/chat.js"),
+    handler: "disconnectHandler",
+    runtime: Lambda.Runtime.NODEJS_18_X,
+  });
+
+  disconnectLambda.addToRolePolicy(
+    new PolicyStatement({
+      effect: Effect.ALLOW,
+      actions: ["dynamodb:*"],
+      resources: [
+        `${process.env.CHAT_TABLE_ARN as string}`,
+        `${process.env.CHAT_TABLE_ARN as string}/index/*`,
+      ],
+    })
+  );
+
+  const defaultLambda = new NodejsFunction(stack, "ChatDefaultLambda", {
+    entry: join("./.build/chat.js"),
+    handler: "defaultHandler",
+    runtime: Lambda.Runtime.NODEJS_18_X,
+  });
+
+  defaultLambda.addToRolePolicy(
+    new PolicyStatement({
+      effect: Effect.ALLOW,
+      actions: ["dynamodb:*"],
+      resources: [
+        `${process.env.CHAT_TABLE_ARN as string}`,
+        `${process.env.CHAT_TABLE_ARN as string}/index/*`,
+      ],
+    })
+  );
+
+  defaultLambda.addToRolePolicy(
+    new PolicyStatement({
+      effect: Effect.ALLOW,
+      actions: ["execute-api:*"],
+      resources: [`${process.env.API_ARN as string}`],
+    })
+  );
+
+  const websocketApi = new apigatewayv2.WebSocketApi(stack, "ChatApi", {
+    apiName: "ChatApi",
+    connectRouteOptions: {
+      integration: new WebSocketLambdaIntegration(
+        "connectionIntegration",
+        connectionLambda
+      ),
+    },
+    disconnectRouteOptions: {
+      integration: new WebSocketLambdaIntegration(
+        "disconnectionIntegration",
+        disconnectLambda
+      ),
+    },
+
+    defaultRouteOptions: {
+      integration: new WebSocketLambdaIntegration(
+        "defaultIntegration",
+        defaultLambda
+      ),
+    },
+  });
+
+  const stage = new apigatewayv2.WebSocketStage(stack, "ChatStage", {
+    webSocketApi: websocketApi,
+    stageName: "prod",
+    autoDeploy: true,
+  });
+
+  new Cdk.CfnOutput(stack, "ChatWebSocketEndpoint", {
+    value: websocketApi.apiEndpoint,
+    description: "Chat WebSocket Endpoint",
   });
 
   // /users
