@@ -13,7 +13,7 @@ dotenv.config();
 export const createApiGateWay = (stack: Cdk.Stack) => {
   const lambda = new NodejsFunction(stack, "ChatHttpLambda", {
     entry: join("./.build/chat.js"),
-    handler: "httpIndex",
+    handler: "httpHandler",
     runtime: Lambda.Runtime.NODEJS_18_X,
   });
 
@@ -37,9 +37,10 @@ export const createApiGateWay = (stack: Cdk.Stack) => {
   // /users/register
   const register = resource.addResource("register");
 
-  const Methods = ["POST", "GET", "PUT", "OPTIONS"];
+  const Methods = ["POST", "OPTIONS", "GET", "PUT", "DELETE"];
   for (const method of Methods) {
     register.addMethod(method, new Apigateway.LambdaIntegration(lambda));
+    resource.addMethod(method, new Apigateway.LambdaIntegration(lambda));
   }
 
   new Cdk.CfnOutput(stack, "ChatApiUrl", {

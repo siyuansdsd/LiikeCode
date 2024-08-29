@@ -11,7 +11,7 @@ const isDevelopment = process.env.NODE_ENV !== "production";
 const entry: { [key: string]: string } = {
   // "lambdas/sample/test": resolve(__dirname, "./src/lambdas/sample/test.ts"),
   // "lambdas/test/main_test": resolve(__dirname, "./src/test/test_file/mockProperty.ts"),
-  "./chat": resolve(__dirname, "./src/httpIndex.ts"),
+  "./chat": resolve(__dirname, "./src/index.ts"),
   // "./user": resolve(__dirname, "./src/userIndex.ts"),
 
   // "lambdas/db": resolve(__dirname, "./src/lambdas/db/db.ts"),
