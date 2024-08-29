@@ -33,14 +33,90 @@ export const createApiGateWay = (stack: Cdk.Stack) => {
   });
 
   // /users
-  const resource = api.root.addResource("users");
-  // /users/register
-  const register = resource.addResource("register");
+  const userResource = api.root.addResource("users");
+  const userResourceMethods = ["OPTIONS", "GET"];
+  for (const method of userResourceMethods) {
+    userResource.addMethod(method, new Apigateway.LambdaIntegration(lambda));
+  }
 
-  const Methods = ["POST", "OPTIONS", "GET", "PUT", "DELETE"];
-  for (const method of Methods) {
+  // /users/register
+  const register = userResource.addResource("register");
+  const registerMethods = ["POST", "OPTIONS"];
+  for (const method of registerMethods) {
     register.addMethod(method, new Apigateway.LambdaIntegration(lambda));
-    resource.addMethod(method, new Apigateway.LambdaIntegration(lambda));
+  }
+
+  // /users/login
+  const login = userResource.addResource("login");
+  const loginMethods = ["POST", "OPTIONS"];
+  for (const method of loginMethods) {
+    login.addMethod(method, new Apigateway.LambdaIntegration(lambda));
+  }
+
+  // /users/{userId}
+  const user = userResource.addResource("{userId}");
+  const userMethods = ["OPTIONS", "GET", "PUT", "DELETE"];
+  for (const method of userMethods) {
+    user.addMethod(method, new Apigateway.LambdaIntegration(lambda));
+  }
+
+  // /users/{userId}/password
+  const password = user.addResource("password");
+  const passwordMethods = ["PUT", "OPTIONS"];
+  for (const method of passwordMethods) {
+    password.addMethod(method, new Apigateway.LambdaIntegration(lambda));
+  }
+
+  // /users/{userId}/groups get users' groups
+  const groups = user.addResource("groups");
+  const groupsMethods = ["GET", "OPTIONS"];
+  for (const method of groupsMethods) {
+    groups.addMethod(method, new Apigateway.LambdaIntegration(lambda));
+  }
+
+  // /groups create group by user
+  const groupResource = api.root.addResource("groups");
+  const groupResourceMethods = ["POST", "GET", "OPTIONS"];
+  for (const method of groupResourceMethods) {
+    groupResource.addMethod(method, new Apigateway.LambdaIntegration(lambda));
+  }
+
+  // /groups/{groupId}
+  const group = groupResource.addResource("{groupId}");
+  const groupMethods = ["GET", "OPTIONS"];
+  for (const method of groupMethods) {
+    group.addMethod(method, new Apigateway.LambdaIntegration(lambda));
+  }
+
+  // /groups/{groupId}/users
+  const groupUsers = group.addResource("users");
+  const groupUsersMethods = ["GET", "POST", "OPTIONS"];
+  for (const method of groupUsersMethods) {
+    groupUsers.addMethod(method, new Apigateway.LambdaIntegration(lambda));
+  }
+
+  // /groups/{groupId}/threads
+  const groupThreads = group.addResource("threads");
+  const groupThreadsMethods = ["GET", "OPTIONS"];
+  for (const method of groupThreadsMethods) {
+    groupThreads.addMethod(method, new Apigateway.LambdaIntegration(lambda));
+  }
+
+  // /groups/{groupId}/threads/latest  get latest thread in specific group
+  const groupThreadsLatest = group.addResource("threads/latest");
+  const groupThreadsLatestMethods = ["GET", "OPTIONS"];
+  for (const method of groupThreadsLatestMethods) {
+    groupThreadsLatest.addMethod(
+      method,
+      new Apigateway.LambdaIntegration(lambda)
+    );
+  }
+
+  // /threads
+  const threadResource = api.root.addResource("threads");
+  const threadResourceMethods = ["POST", "OPTIONS"];
+  for (const method of threadResourceMethods) {
+    threadResource.addMethod(method, new Apigateway.LambdaIntegration(lambda));
   }
 
   new Cdk.CfnOutput(stack, "ChatApiUrl", {
