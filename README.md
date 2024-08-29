@@ -6,6 +6,7 @@
 - [Technologies](#technologies-used)
 - [Getting_Started](#getting-started)
 - [API](#api-documentation)
+- [DB_Design](#database-design)
 
 ## Introduction
 
@@ -53,7 +54,37 @@ REGION =
 ACCOUNT_ID =
 ```
 
-4. using webpack pack files
+4. Unit test
+
+you can use following commands running unit test
+
+```bash
+$ npm run test
+
+$ npm run test:cov
+```
+
+recommend using **_npm run test:cov_**, and you can
+compare with following coverage table:
+
+```bash
+
+----------------------|---------|----------|---------|---------|
+File                  | % Stmts | % Branch | % Funcs | % Lines |
+----------------------|---------|----------|---------|---------|
+All files             |     100 |      100 |     100 |     100 |
+ group.service.ts     |     100 |      100 |     100 |     100 |
+ message.service.ts   |     100 |      100 |     100 |     100 |
+ thread.service.ts    |     100 |      100 |     100 |     100 |
+ user.service.ts      |     100 |      100 |     100 |     100 |
+ userGroup.service.ts |     100 |      100 |     100 |     100 |
+----------------------|---------|----------|---------|---------|
+
+```
+
+If there any wrong, you may need to pull or download the code again.
+
+5. using webpack pack files
 
 ```bash
 $ npm run build
@@ -61,7 +92,7 @@ $ npm run build
 
 you can find the packed file in ./build under the root path
 
-5. using cdk finish Lambda function deploy
+6. using cdk finish Lambda function deploy
 
 first time will spend about 3 mins on building
 
