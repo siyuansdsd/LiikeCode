@@ -149,7 +149,7 @@ export const getThreadsByGroupSorted = async (
 ): Promise<ThreadServicesOutput> => {
   const params: QueryCommandInput = {
     TableName: process.env.CHAT_TABLE!,
-    IndexName: "LSI-lastMessageAt", // a LSI for change sort key to help us sort
+    IndexName: "LSI_lastMessageAt", // a LSI for change sort key to help us sort
     KeyConditionExpression: "pk = :pk",
     ExpressionAttributeValues: {
       ":pk": { S: `GROUP#${groupId}` },

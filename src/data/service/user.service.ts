@@ -81,7 +81,7 @@ export const getUserByWssId = async (
 ): Promise<UserServicesOutput> => {
   const params: QueryCommandInput = {
     TableName: process.env.CHAT_TABLE!,
-    IndexName: "GSI-PK:wwsId",
+    IndexName: "GSI_PK_wwsId",
     KeyConditionExpression: "pk = :wwsId",
     ExpressionAttributeValues: {
       ":wssId": { S: connectId },
@@ -105,7 +105,7 @@ export const getUserByEmail = async (
 ): Promise<UserServicesOutput> => {
   const params: QueryCommandInput = {
     TableName: process.env.CHAT_TABLE!,
-    IndexName: "GSI-PK:EMAIL",
+    IndexName: "GSI_PK_email",
     KeyConditionExpression: "email = :email",
     ExpressionAttributeValues: {
       ":email": { S: email },

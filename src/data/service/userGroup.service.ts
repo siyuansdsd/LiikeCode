@@ -119,7 +119,7 @@ export const getUserGroupsByGroup = async (
 ): Promise<UserGroupServicesOutput> => {
   const params: QueryCommandInput = {
     TableName: process.env.CHAT_TABLE!,
-    IndexName: "GSI-GROUP#PK:SK#SK:PK",
+    IndexName: "GSI_PK_SK_SK_PK",
     KeyConditionExpression: "pk = :sk AND begins_with(sk, :pk)",
     ExpressionAttributeValues: {
       ":sk": { S: `GROUP#${groupId}` },

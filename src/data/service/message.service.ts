@@ -155,7 +155,7 @@ export const getMessagesByThreadOrdered = async (
 ): Promise<MessageServicesOutput> => {
   const params: QueryCommandInput = {
     TableName: process.env.CHAT_TABLE!,
-    IndexName: "LSI-createdAt", // Local Secondary Index on createdAt
+    IndexName: "LSI_createdAt", // Local Secondary Index on createdAt
     KeyConditionExpression: "pk = :pk",
     ExpressionAttributeValues: {
       ":pk": { S: `THREAD#${threadId}` },
