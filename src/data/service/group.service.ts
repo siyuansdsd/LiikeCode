@@ -55,8 +55,8 @@ export const getGroup = async (
   const params: GetCommandInput = {
     TableName: process.env.CHAT_TABLE!,
     Key: {
-      pk: { S: `GROUP#${groupId}` },
-      sk: { S: "METADATA" },
+      pk: `GROUP#${groupId}`,
+      sk: "METADATA",
     },
   };
   const response = await dynamoDB.dbGet(params);
@@ -77,8 +77,8 @@ export const getGroups = async (): Promise<GroupServicesOutput> => {
     TableName: process.env.CHAT_TABLE!,
     FilterExpression: "sk = :sk AND begins_with(pk, :pk)",
     ExpressionAttributeValues: {
-      ":pk": { S: "GROUP" },
-      ":sk": { S: "METADATA" },
+      ":pk": "GROUP",
+      ":sk": "METADATA",
     },
   };
 
@@ -106,8 +106,8 @@ export const deleteGroup = async (
   const params: DeleteCommandInput = {
     TableName: process.env.CHAT_TABLE!,
     Key: {
-      pk: { S: `GROUP#${groupId}` },
-      sk: { S: "METADATA" },
+      pk: `GROUP#${groupId}`,
+      sk: "METADATA",
     },
   };
   const response = await dynamoDB.dbDelete(params);

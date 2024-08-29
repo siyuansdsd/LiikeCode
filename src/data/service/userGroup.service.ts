@@ -51,8 +51,8 @@ export const getUserGroup = async (
   const params: GetCommandInput = {
     TableName: process.env.CHAT_TABLE!,
     Key: {
-      pk: { S: `USER#${userId}` },
-      sk: { S: `GROUP#${groupId}` },
+      pk: `USER#${userId}`,
+      sk: `GROUP#${groupId}`,
     },
   };
   const response = await dynamoDB.dbGet(params);
@@ -75,7 +75,7 @@ export const getUserGroupsByUser = async (
     TableName: process.env.CHAT_TABLE!,
     KeyConditionExpression: "pk = :pk",
     ExpressionAttributeValues: {
-      ":pk": { S: `USER#${userId}` },
+      ":pk": `USER#${userId}`,
     },
   };
   const response = await dynamoDB.dbQuery(params);
@@ -100,8 +100,8 @@ export const deleteUserGroup = async (
   const params: GetCommandInput = {
     TableName: process.env.CHAT_TABLE!,
     Key: {
-      pk: { S: `USER#${userId}` },
-      sk: { S: `GROUP#${groupId}` },
+      pk: `USER#${userId}`,
+      sk: `GROUP#${groupId}`,
     },
   };
   const response = await dynamoDB.dbDelete(params);
@@ -122,8 +122,8 @@ export const getUserGroupsByGroup = async (
     IndexName: "GSI_PK_SK_SK_PK",
     KeyConditionExpression: "pk = :sk AND begins_with(sk, :pk)",
     ExpressionAttributeValues: {
-      ":sk": { S: `GROUP#${groupId}` },
-      ":pk": { S: "USER#" },
+      ":sk": `GROUP#${groupId}`,
+      ":pk": "USER#",
     },
   };
   const response = await dynamoDB.dbQuery(params);

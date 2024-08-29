@@ -58,8 +58,8 @@ export const getThread = async (
   const params: GetCommandInput = {
     TableName: process.env.CHAT_TABLE!,
     Key: {
-      pk: { S: `GROUP#${groupId}` },
-      sk: { S: `THREAD#${threadId}` },
+      pk: `GROUP#${groupId}`,
+      sk: `THREAD#${threadId}`,
     },
   };
   const response = await dynamoDB.dbGet(params);
@@ -83,7 +83,7 @@ export const getThreadsByGroup = async (
     TableName: process.env.CHAT_TABLE!,
     KeyConditionExpression: "pk = :pk",
     ExpressionAttributeValues: {
-      ":pk": { S: `GROUP#${groupId}` },
+      ":pk": `GROUP#${groupId}`,
     },
   };
   const response = await dynamoDB.dbQuery(params);
@@ -109,8 +109,8 @@ export const deleteThread = async (
   const params: DeleteCommandInput = {
     TableName: process.env.CHAT_TABLE!,
     Key: {
-      pk: { S: `GROUP#${groupId}` },
-      sk: { S: `THREAD#${threadId}` },
+      pk: `GROUP#${groupId}`,
+      sk: `THREAD#${threadId}`,
     },
   };
   const response = await dynamoDB.dbDelete(params);
@@ -152,7 +152,7 @@ export const getThreadsByGroupSorted = async (
     IndexName: "LSI_lastMessageAt", // a LSI for change sort key to help us sort
     KeyConditionExpression: "pk = :pk",
     ExpressionAttributeValues: {
-      ":pk": { S: `GROUP#${groupId}` },
+      ":pk": `GROUP#${groupId}`,
     },
     ScanIndexForward: false,
   };

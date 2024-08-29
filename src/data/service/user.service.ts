@@ -61,8 +61,8 @@ export const getUser = async (userId: string): Promise<UserServicesOutput> => {
   const params: GetCommandInput = {
     TableName: process.env.CHAT_TABLE!,
     Key: {
-      pk: { S: `USER#${userId}` },
-      sk: { S: "PROFILE" },
+      pk: `USER#${userId}`,
+      sk: "PROFILE",
     },
   };
   const response = await dynamoDB.dbGet(params);
@@ -86,7 +86,7 @@ export const getUserByWssId = async (
     IndexName: "GSI_PK_wwsId",
     KeyConditionExpression: "pk = :wwsId",
     ExpressionAttributeValues: {
-      ":wssId": { S: connectId },
+      ":wssId": connectId,
     },
   };
   const response = await dynamoDB.dbQuery(params);
@@ -132,8 +132,8 @@ export const getUsers = async (): Promise<UserServicesOutput> => {
     TableName: process.env.CHAT_TABLE!,
     FilterExpression: "sk = :sk AND begins_with(pk, :pk)",
     ExpressionAttributeValues: {
-      ":sk": { S: "PROFILE" },
-      ":pk": { S: "USER#" },
+      ":sk": "PROFILE",
+      ":pk": "USER#",
     },
   };
   const response = await dynamoDB.dbScan(params);
@@ -157,8 +157,8 @@ export const deleteUser = async (
   const params: DeleteCommandInput = {
     TableName: process.env.CHAT_TABLE!,
     Key: {
-      pk: { S: `USER#${userId}` },
-      sk: { S: "PROFILE" },
+      pk: `USER#${userId}`,
+      sk: "PROFILE",
     },
   };
   const response = await dynamoDB.dbDelete(params);

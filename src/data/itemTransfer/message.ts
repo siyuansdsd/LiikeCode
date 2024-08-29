@@ -2,8 +2,8 @@ import { Message } from "../interfaces/interfaces";
 
 export const messageFromItem = (item: Record<string, any>): Message => {
   if (
-    !item.PK ||
-    !item.SK ||
+    !item.pk ||
+    !item.sk ||
     !item.messageId ||
     !item.content ||
     !item.senderUserId ||

@@ -59,8 +59,8 @@ export const getMessage = async (
   const params: GetCommandInput = {
     TableName: process.env.CHAT_TABLE!,
     Key: {
-      pk: { S: `THREAD#${threadId}` },
-      sk: { S: `MESSAGE#${messageId}` },
+      pk: `THREAD#${threadId}`,
+      sk: `MESSAGE#${messageId}`,
     },
   };
   const response = await dynamoDB.dbGet(params);
@@ -83,8 +83,8 @@ export const deleteMessage = async (
   const params: DeleteCommandInput = {
     TableName: process.env.CHAT_TABLE!,
     Key: {
-      pk: { S: `THREAD#${threadId}` },
-      sk: { S: `MESSAGE#${messageId}` },
+      pk: `THREAD#${threadId}`,
+      sk: `MESSAGE#${messageId}`,
     },
   };
   const response = await dynamoDB.dbDelete(params);
@@ -104,7 +104,7 @@ export const getMessagesByThread = async (
     TableName: process.env.CHAT_TABLE!,
     KeyConditionExpression: "pk = :pk",
     ExpressionAttributeValues: {
-      ":pk": { S: `THREAD#${threadId}` },
+      ":pk": `THREAD#${threadId}`,
     },
   };
   const response = await dynamoDB.dbQuery(params);
@@ -130,7 +130,7 @@ export const getMessagesByGroup = async (
     IndexName: "GSI1",
     KeyConditionExpression: "GSI1PK = :pk",
     ExpressionAttributeValues: {
-      ":pk": { S: `GROUP#${groupId}` },
+      ":pk": `GROUP#${groupId}`,
     },
   };
   const response = await dynamoDB.dbQuery(params);
@@ -158,7 +158,7 @@ export const getMessagesByThreadOrdered = async (
     IndexName: "LSI_createdAt", // Local Secondary Index on createdAt
     KeyConditionExpression: "pk = :pk",
     ExpressionAttributeValues: {
-      ":pk": { S: `THREAD#${threadId}` },
+      ":pk": `THREAD#${threadId}`,
     },
     ScanIndexForward: false,
     Limit: limit, // through this we can limit the number of messages we get

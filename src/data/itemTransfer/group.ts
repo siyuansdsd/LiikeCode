@@ -2,8 +2,8 @@ import { Group } from "../interfaces/interfaces";
 
 export const groupFromItem = (item: Record<string, any>): Group => {
   if (
-    !item.PK ||
-    !item.SK ||
+    !item.pk ||
+    !item.sk ||
     !item.groupId ||
     !item.groupName ||
     !item.emoticon ||

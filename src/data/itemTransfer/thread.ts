@@ -2,8 +2,8 @@ import { Thread } from "../interfaces/interfaces";
 
 export const threadFromItem = (item: Record<string, any>): Thread => {
   if (
-    !item.PK ||
-    !item.SK ||
+    !item.pk ||
+    !item.sk ||
     !item.threadId ||
     !item.threadName ||
     !item.groupId ||

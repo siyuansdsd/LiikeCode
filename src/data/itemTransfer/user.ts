@@ -2,8 +2,8 @@ import { User } from "../interfaces/interfaces";
 
 export const userFromItem = (item: Record<string, any>): User => {
   if (
-    !item.PK ||
-    !item.SK ||
+    !item.pk ||
+    !item.sk ||
     !item.userId ||
     !item.userName ||
     !item.email ||
