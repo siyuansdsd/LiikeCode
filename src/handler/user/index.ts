@@ -11,6 +11,7 @@ import {
   deleteUserById,
   getAllUsers,
   getUserGroups,
+  getUserById,
 } from "./handlers";
 
 const userHandler = async (event: APIGatewayProxyEvent) => {
@@ -28,7 +29,10 @@ const userHandler = async (event: APIGatewayProxyEvent) => {
         return await getAllUsers(event);
       }
       if (event.path.startsWith("/users/") && event.path.endsWith("/groups")) {
-        return await getUserGroups(event); // 处理 /users/{userId}/groups
+        return await getUserGroups(event); // /users/{userId}/groups
+      }
+      if (event.path.startsWith("/users/") && !event.path.endsWith("/groups")) {
+        return await getUserById(event); // /users/{userId}
       }
       break;
     case "DELETE":

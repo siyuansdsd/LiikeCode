@@ -69,6 +69,22 @@ export const loginUser = async (event: APIGatewayProxyEvent) => {
   return Response(200, { user: getResponse.user });
 };
 
+// GET /users/{userId}
+export const getUserById = async (event: APIGatewayProxyEvent) => {
+  const userId = event.pathParameters?.userId;
+  if (!userId) {
+    return new BadRequestError("Invalid path parameter").response();
+  }
+
+  const response = await getUserByEmail(userId);
+
+  if (response.user === undefined) {
+    return new BadRequestError("User not found").response();
+  }
+
+  return Response(200, { user: response.user });
+};
+
 // DELETE /users/{userId}
 export const deleteUserById = async (event: APIGatewayProxyEvent) => {
   const userId = event.pathParameters?.userId;
