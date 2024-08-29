@@ -4,7 +4,6 @@ import {
   PutCommandInput,
   GetCommandInput,
   DeleteCommandInput,
-  QueryCommandInput,
   ScanCommandInput,
 } from "@aws-sdk/lib-dynamodb";
 import { v4 as uuidv4 } from "uuid";
@@ -66,7 +65,7 @@ export const getGroup = async (
   if (response.statusCode === 500) {
     result.errorMessage = response.errorMessage;
   }
-  if (response.Item) {
+  if (response.Item !== undefined) {
     result.group = groupFromItem(response.Item as Record<string, any>);
   }
   return result;
@@ -91,10 +90,12 @@ export const getGroups = async (): Promise<GroupServicesOutput> => {
     result.errorMessage = response.errorMessage;
   }
 
-  if (response.Items) {
+  if (response.Items instanceof Array && response.Items.length > 0) {
     result.groups = response.Items.map((item) =>
       groupFromItem(item as Record<string, any>)
     );
+  } else {
+    result.groups = [];
   }
 
   return result;

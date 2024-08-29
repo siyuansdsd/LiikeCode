@@ -70,7 +70,7 @@ export const getMessage = async (
   if (response.statusCode === 500) {
     result.errorMessage = response.errorMessage;
   }
-  if (response.Item) {
+  if (response.Item !== undefined) {
     result.message = messageFromItem(response.Item as Record<string, any>);
   }
   return result;
@@ -114,10 +114,12 @@ export const getMessagesByThread = async (
   if (response.statusCode === 500) {
     result.errorMessage = response.errorMessage;
   }
-  if (response.Items) {
+  if (response.Items instanceof Array && response.Items.length > 0) {
     result.messages = response.Items.map((item) =>
       messageFromItem(item as Record<string, any>)
     );
+  } else {
+    result.messages = [];
   }
   return result;
 };
@@ -140,10 +142,12 @@ export const getMessagesByGroup = async (
   if (response.statusCode === 500) {
     result.errorMessage = response.errorMessage;
   }
-  if (response.Items) {
+  if (response.Items instanceof Array && response.Items.length > 0) {
     result.messages = response.Items.map((item) =>
       messageFromItem(item as Record<string, any>)
     );
+  } else {
+    result.messages = [];
   }
   return result;
 };
@@ -170,10 +174,12 @@ export const getMessagesByThreadOrdered = async (
   if (response.statusCode === 500) {
     result.errorMessage = response.errorMessage;
   }
-  if (response.Items) {
+  if (response.Items instanceof Array && response.Items.length > 0) {
     result.messages = response.Items.map((item) =>
       messageFromItem(item as Record<string, any>)
     );
+  } else {
+    result.messages = [];
   }
   return result;
 };

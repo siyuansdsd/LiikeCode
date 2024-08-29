@@ -72,7 +72,7 @@ export const getUser = async (userId: string): Promise<UserServicesOutput> => {
   if (response.statusCode === 500) {
     result.errorMessage = response.errorMessage;
   }
-  if (response.Item) {
+  if (response.Item !== undefined) {
     result.user = userFromItem(response.Item as Record<string, any>);
   }
   return result;
@@ -96,7 +96,7 @@ export const getUserByWssId = async (
   if (response.statusCode === 500) {
     result.errorMessage = response.errorMessage;
   }
-  if (response.Items) {
+  if (response.Items instanceof Array && response.Items.length > 0) {
     result.user = userFromItem(response.Items[0] as Record<string, any>);
   }
   return result;
@@ -120,7 +120,7 @@ export const getUserByEmail = async (
   if (response.statusCode === 500) {
     result.errorMessage = response.errorMessage;
   }
-  if (response.Items) {
+  if (response.Items instanceof Array && response.Items.length > 0) {
     logger.info("getUserByEmail---: ", response.Items);
     result.user = userFromItem(response.Items[0]);
   }
@@ -143,10 +143,12 @@ export const getUsers = async (): Promise<UserServicesOutput> => {
   if (response.statusCode === 500) {
     result.errorMessage = response.errorMessage;
   }
-  if (response.Items) {
+  if (response.Items instanceof Array && response.Items.length > 0) {
     result.users = response.Items.map((item) =>
       userFromItem(item as Record<string, any>)
     );
+  } else {
+    result.users = [];
   }
   return result;
 };

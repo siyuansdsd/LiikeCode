@@ -70,7 +70,7 @@ export const getThread = async (
     result.errorMessage = response.errorMessage;
   }
 
-  if (response.Item) {
+  if (response.Item !== undefined) {
     result.thread = threadFromItem(response.Item as Record<string, any>);
   }
   return result;
@@ -94,10 +94,12 @@ export const getThreadsByGroup = async (
     result.errorMessage = response.errorMessage;
   }
 
-  if (response.Items) {
+  if (response.Items instanceof Array && response.Items.length > 0) {
     result.threads = response.Items.map((item) =>
       threadFromItem(item as Record<string, any>)
     );
+  }else {
+    result.threads = [];
   }
   return result;
 };
@@ -164,10 +166,12 @@ export const getThreadsByGroupSorted = async (
     result.errorMessage = response.errorMessage;
   }
 
-  if (response.Items) {
+  if (response.Items instanceof Array && response.Items.length > 0) {
     result.threads = response.Items.map((item) =>
       threadFromItem(item as Record<string, any>)
     );
+  }else {
+    result.threads = [];
   }
   return result;
 };

@@ -62,7 +62,7 @@ export const getUserGroup = async (
   if (response.statusCode === 500) {
     result.errorMessage = response.errorMessage;
   }
-  if (response.Item) {
+  if (response.Item !== undefined) {
     result.userGroup = userGroupFromItem(response.Item as Record<string, any>);
   }
   return result;
@@ -85,10 +85,12 @@ export const getUserGroupsByUser = async (
   if (response.statusCode === 500) {
     result.errorMessage = response.errorMessage;
   }
-  if (response.Items) {
+  if (response.Items instanceof Array && response.Items.length > 0) {
     result.userGroups = response.Items.map((item) =>
       userGroupFromItem(item as Record<string, any>)
     );
+  } else {
+    result.userGroups = [];
   }
   return result;
 };
@@ -134,7 +136,7 @@ export const getUserGroupsByGroup = async (
     result.errorMessage = response.errorMessage;
   }
 
-  if (response.Items) {
+  if (response.Items instanceof Array && response.Items.length > 0) {
     result.userGroups = response.Items.map((item) =>
       userGroupFromItem(item as Record<string, any>)
     );
