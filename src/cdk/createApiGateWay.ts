@@ -216,6 +216,13 @@ export const createApiGateWay = (stack: Cdk.Stack) => {
     threadResource.addMethod(method, new Apigateway.LambdaIntegration(lambda));
   }
 
+  // /threads/{threadId}?limit=v1&groupId=v2
+  const thread = threadResource.addResource("{threadId}");
+  const threadMethods = ["GET", "OPTIONS"];
+  for (const method of threadMethods) {
+    thread.addMethod(method, new Apigateway.LambdaIntegration(lambda));
+  }
+
   new Cdk.CfnOutput(stack, "ChatApiUrl", {
     value: api.url,
     description: "Chat API URL",
