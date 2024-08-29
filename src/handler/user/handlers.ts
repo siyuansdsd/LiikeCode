@@ -10,6 +10,8 @@ import {
   createUser,
   deleteUser,
   getUsers,
+  updateUser,
+  getUser,
 } from "../../data/service/user.service";
 import { getUserGroupsByUser } from "../../data/service/userGroup.service";
 import { getGroup } from "../../data/service/group.service";
@@ -126,7 +128,38 @@ export const getUserGroups = async (event: APIGatewayProxyEvent) => {
   return Response(200, { userGroups });
 };
 
-//
+// PUT /users/{userId}/password
+export const updateUserPasswordById = async (event: APIGatewayProxyEvent) => {
+  const userId = event.pathParameters?.userId;
+  if (!userId) {
+    return new BadRequestError("Invalid path parameter").response();
+  }
+
+  const body = JSON.parse(event.body || "{}");
+  if (!body.password) {
+    return new JsonError("Invalid JSON schema").response();
+  }
+
+  const newPassword = body.password;
+
+  const response = await getUser(userId);
+
+  if (response.statusCode === 500) {
+    return new UnexpectedError(response.errorMessage).response();
+  }
+  if (response.user === undefined) {
+    return new BadRequestError("User not found").response();
+  }
+  const user = response.user;
+  user.password = newPassword;
+
+  const updateResponse = await updateUser(user);
+  if (updateResponse.statusCode === 500) {
+    return new UnexpectedError(updateResponse.errorMessage).response();
+  }
+
+  return Response(200, { message: "Password updated" });
+};
 
 // GET /users For Admin and Dev
 export const getAllUsers = async (event: APIGatewayProxyEvent) => {

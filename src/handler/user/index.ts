@@ -12,6 +12,7 @@ import {
   getAllUsers,
   getUserGroups,
   getUserById,
+  updateUserPasswordById,
 } from "./handlers";
 
 const userHandler = async (event: APIGatewayProxyEvent) => {
@@ -35,6 +36,8 @@ const userHandler = async (event: APIGatewayProxyEvent) => {
         return await getUserById(event); // /users/{userId}
       }
       break;
+    case "PUT":
+      return await updateUserPasswordById(event); // /users/{userId}/password
     case "DELETE":
       return await deleteUserById(event);
       break;
