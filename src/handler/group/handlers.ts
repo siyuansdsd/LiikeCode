@@ -139,7 +139,9 @@ export const addUserToGroup = async (event: APIGatewayProxyEvent) => {
 };
 
 // GET /groups/{groupId}/threads  order by last message
-export const getGroupsByLastMessage = async (event: APIGatewayProxyEvent) => {
+export const getGroupsThreadByLastMessage = async (
+  event: APIGatewayProxyEvent
+) => {
   const groupId = event.pathParameters?.groupId;
   if (!groupId) {
     return new BadRequestError("Invalid groupId").response();
