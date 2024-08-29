@@ -192,8 +192,8 @@ describe("User Service", () => {
       statusCode: 200,
       Items: [
         {
-          PK: "USER#mock-uuid",
-          SK: "PROFILE",
+          pk: "USER#mock-uuid",
+          sk: "PROFILE",
           userId: "mock-uuid",
           userName: "Test User",
           email: "test@example.com",
