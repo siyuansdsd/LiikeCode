@@ -18,10 +18,10 @@ export const userGroupToItem = (
   userGroup: UserGroup
 ): Record<string, unknown> => {
   return {
-    pk: { S: userGroup.PK },
-    sk: { S: userGroup.SK },
-    userId: { S: userGroup.userId },
-    groupId: { S: userGroup.groupId },
-    joinedAt: { N: userGroup.joinedAt.toString() },
+    pk: userGroup.PK,
+    sk: userGroup.SK,
+    userId: userGroup.userId,
+    groupId: userGroup.groupId,
+    joinedAt: userGroup.joinedAt,
   };
 };

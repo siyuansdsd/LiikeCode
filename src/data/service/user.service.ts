@@ -9,6 +9,7 @@ import {
 } from "@aws-sdk/lib-dynamodb";
 import { v4 as uuidv4 } from "uuid";
 import DynamoDB from "../dynamoDB/dynamoDB";
+import { logger } from "../../../shared/utils/logger";
 
 interface UserServicesOutput {
   statusCode: number;
@@ -43,6 +44,7 @@ export const createUser = async (
     TableName: process.env.CHAT_TABLE!,
     Item: item,
   };
+  logger.info("createUser---: ", params);
   const response = await dynamoDB.dbPut(params);
   const result: UserServicesOutput = {
     statusCode: response.statusCode,

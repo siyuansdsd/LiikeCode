@@ -28,13 +28,13 @@ export const messageFromItem = (item: Record<string, any>): Message => {
 
 export const messageToItem = (message: Message): Record<string, unknown> => {
   return {
-    pk: { S: message.PK },
-    sk: { S: message.SK },
-    messageId: { S: message.messageId },
-    content: { S: message.content },
-    senderUserId: { S: message.senderUserId },
-    createdAt: { N: message.createdAt.toString() },
-    GSI1PK: { S: message.GSI1PK },
-    GSI1SK: { S: message.GSI1SK },
+    pk: message.PK,
+    sk: message.SK,
+    messageId: message.messageId,
+    content: message.content,
+    senderUserId: message.senderUserId,
+    createdAt: message.createdAt,
+    GSI1PK: message.GSI1PK,
+    GSI1SK: message.GSI1SK,
   };
 };

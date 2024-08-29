@@ -27,15 +27,13 @@ export const threadFromItem = (item: Record<string, any>): Thread => {
 
 export const threadToItem = (thread: Thread): Record<string, unknown> => {
   return {
-    pk: { S: thread.PK },
-    sk: { S: thread.SK },
-    threadId: { S: thread.threadId },
-    threadName: { S: thread.threadName },
-    groupId: { S: thread.groupId },
-    color: { S: thread.color },
-    createdAt: { N: thread.createdAt.toString() },
-    lastMessageAt: thread.lastMessageAt
-      ? { N: thread.lastMessageAt.toString() }
-      : undefined,
+    pk: thread.PK,
+    sk: thread.SK,
+    threadId: thread.threadId,
+    threadName: thread.threadName,
+    groupId: thread.groupId,
+    color: thread.color,
+    createdAt: thread.createdAt,
+    lastMessageAt: thread.lastMessageAt ? thread.lastMessageAt : undefined,
   };
 };

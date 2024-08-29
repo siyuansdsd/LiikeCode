@@ -30,15 +30,15 @@ export const userFromItem = (item: Record<string, any>): User => {
 
 export const userToItem = (user: User): Record<string, unknown> => {
   return {
-    pk: { S: user.PK },
-    sk: { S: user.PK },
-    userId: { S: user.userId },
-    email: { S: user.email },
-    password: { S: user.password },
-    dateOfBirth: { S: user.dateOfBirth },
-    createdAt: { N: user.createdAt.toString() },
-    userName: { S: user.userName },
-    wssId: user.wssId ? { S: user.wssId } : undefined,
-    userImageUrl: user.userImageUrl ? { S: user.userImageUrl } : undefined,
+    pk: user.PK,
+    sk: user.SK,
+    userId: user.userId,
+    email: user.email,
+    password: user.password,
+    dateOfBirth: user.dateOfBirth,
+    createdAt: user.createdAt,
+    userName: user.userName,
+    wssId: user.wssId ? user.wssId : undefined,
+    userImageUrl: user.userImageUrl ? user.userImageUrl : undefined,
   };
 };

@@ -25,14 +25,12 @@ export const groupFromItem = (item: Record<string, any>): Group => {
 
 export const groupToItem = (group: Group): Record<string, unknown> => {
   return {
-    pk: { S: group.PK },
-    sk: { S: group.SK },
-    groupId: { S: group.groupId },
-    groupName: { S: group.groupName },
-    emoticon: { S: group.emoticon },
-    lastMessageAt: group.lastMessageAt
-      ? { N: group.lastMessageAt.toString() }
-      : undefined,
-    createdAt: { N: group.createdAt.toString() },
+    pk: group.PK,
+    sk: group.SK,
+    groupId: group.groupId,
+    groupName: group.groupName,
+    emoticon: group.emoticon,
+    lastMessageAt: group.lastMessageAt ? group.lastMessageAt : undefined,
+    createdAt: group.createdAt,
   };
 };
