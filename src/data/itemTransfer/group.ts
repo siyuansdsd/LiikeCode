@@ -13,7 +13,7 @@ export const groupFromItem = (item: Record<string, any>): Group => {
   }
 
   return {
-    PK: item.PK as `GROUP#${string}`,
+    PK: item.pk as `GROUP#${string}`,
     SK: "METADATA",
     groupId: item.groupId as string,
     groupName: item.groupName as string,

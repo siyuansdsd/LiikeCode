@@ -15,7 +15,7 @@ export const userFromItem = (item: Record<string, any>): User => {
   }
 
   return {
-    PK: item.PK as `USER#${string}`,
+    PK: item.pk as `USER#${string}`,
     SK: "PROFILE",
     userId: item.userId as string,
     userName: item.userName as string,

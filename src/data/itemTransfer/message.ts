@@ -15,8 +15,8 @@ export const messageFromItem = (item: Record<string, any>): Message => {
   }
 
   return {
-    PK: item.PK as `THREAD#${string}`,
-    SK: item.SK as `MESSAGE#${string}`,
+    PK: item.pk as `THREAD#${string}`,
+    SK: item.sk as `MESSAGE#${string}`,
     messageId: item.messageId as string,
     content: item.content as string,
     senderUserId: item.senderUserId as string,

@@ -14,8 +14,8 @@ export const threadFromItem = (item: Record<string, any>): Thread => {
   }
 
   return {
-    PK: item.PK as `GROUP#${string}`,
-    SK: item.SK as `THREAD#${string}`,
+    PK: item.pk as `GROUP#${string}`,
+    SK: item.sk as `THREAD#${string}`,
     threadId: item.threadId as string,
     threadName: item.threadName as string,
     lastMessageAt: item.lastMessageAt as number | undefined,

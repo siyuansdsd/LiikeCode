@@ -110,7 +110,7 @@ export const getUserByEmail = async (
     IndexName: "GSI_PK_email",
     KeyConditionExpression: "email = :email",
     ExpressionAttributeValues: {
-      ":email": { S: email },
+      ":email": email,
     },
   };
   const response = await dynamoDB.dbQuery(params);
@@ -121,7 +121,8 @@ export const getUserByEmail = async (
     result.errorMessage = response.errorMessage;
   }
   if (response.Items) {
-    result.user = userFromItem(response.Items[0] as Record<string, any>);
+    logger.info("getUserByEmail---: ", response.Items);
+    result.user = userFromItem(response.Items[0]);
   }
   return result;
 };
