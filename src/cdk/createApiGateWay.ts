@@ -6,6 +6,7 @@ import { NodejsFunction } from "aws-cdk-lib/aws-lambda-nodejs";
 import * as Lambda from "aws-cdk-lib/aws-lambda";
 import { Effect, PolicyStatement } from "aws-cdk-lib/aws-iam";
 import { join } from "path";
+import * as cloudwatch from "aws-cdk-lib/aws-cloudwatch";
 import dotenv from "dotenv";
 
 dotenv.config();
@@ -218,5 +219,30 @@ export const createApiGateWay = (stack: Cdk.Stack) => {
   new Cdk.CfnOutput(stack, "ChatApiUrl", {
     value: api.url,
     description: "Chat API URL",
+  });
+
+  // add cloudwatch alarms in case of high traffic when deploying
+  new cloudwatch.Alarm(stack, "wssConnectCountAlarm", {
+    metric: websocketApi.metric("ConnectCount"),
+    threshold: 1000, // 1000 connections
+    evaluationPeriods: 1,
+    comparisonOperator: cloudwatch.ComparisonOperator.GREATER_THAN_THRESHOLD,
+    alarmDescription: "Alarm when connect count is greater than 1",
+  });
+
+  new cloudwatch.Alarm(stack, "wssDisconnectCountAlarm", {
+    metric: websocketApi.metric("DisconnectCount"),
+    threshold: 1000, // 1000 connections
+    evaluationPeriods: 1,
+    comparisonOperator: cloudwatch.ComparisonOperator.GREATER_THAN_THRESHOLD,
+    alarmDescription: "Alarm when disconnect count is greater than 1",
+  });
+
+  new cloudwatch.Alarm(stack, "wssMessageCountAlarm", {
+    metric: websocketApi.metric("MessageCount"),
+    threshold: 10000, // 10000 messages
+    evaluationPeriods: 1,
+    comparisonOperator: cloudwatch.ComparisonOperator.GREATER_THAN_THRESHOLD,
+    alarmDescription: "Alarm when message count is less than 1",
   });
 };
