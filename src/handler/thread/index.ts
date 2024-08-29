@@ -5,16 +5,16 @@ import {
   UnexpectedError,
 } from "../../common/common";
 
-import { createThreadsInGroup } from "./handlers";
+import { createThreadsInGroup, getMessagesInThread } from "./handlers";
 
 const threadHandler = async (event: APIGatewayProxyEvent) => {
   switch (event.httpMethod) {
     case "POST":
       return await createThreadsInGroup(event);
-      break;
+    case "GET":
+      return await getMessagesInThread(event);
     case "OPTIONS":
       return Response(200, {});
-      break;
     default:
       return new NotImplementedError("Not implemented").response();
   }
