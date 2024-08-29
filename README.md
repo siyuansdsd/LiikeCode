@@ -9,17 +9,8 @@
 
 ## Introduction
 
-Really thank you for watching this project!
-
-This is a Chat room demo, allow clients chat real-time online through wss.
-
-There is 1 api for chat goals:
-wss://21st7ias6g.execute-api.ap-southeast-2.amazonaws.com/prod?user={yourUserName}&chatroom=1
-
-Or come to visit [demo website](https://chat.douglas-yang.com),
-It provide a web UI for you to try the features
-
-you should use Postman websocket template or other wws tools to check its performance
+Using 4 entities: User, Group, Thread, Message
+Finish a Chat APP Backend based websocket
 
 ## Technologies Used
 
@@ -239,3 +230,138 @@ Then you can find there is an output in your local console about your api inform
      - Updates the `lastMessageAt` timestamp for the thread and group.
      - Retrieves all users in the group and sends the message to all connected users.
      - Returns a success response after the message is successfully sent.
+
+## Database Design
+
+This section provides an overview of the DynamoDB table structure, including the primary key schema, Global Secondary Indexes (GSIs), Local Secondary Indexes (LSIs), and entity relationships.
+
+### Table Structure
+
+The DynamoDB table follows a single-table design with the following primary attributes:
+
+- **PK** (Partition Key): The primary partition key for the table.
+- **SK** (Sort Key): The primary sort key for the table.
+
+### Entity Interfaces
+
+The following entities are stored in the DynamoDB table, each with a specific PK and SK pattern:
+
+1. **User Entity**
+
+   - **PK:** `USER#{userId}`
+   - **SK:** `"PROFILE"`
+   - **Attributes:**
+     - `userId`: Unique identifier for the user.
+     - `wssId`: WebSocket connection ID (optional).
+     - `userName`: Name of the user.
+     - `email`: Email address of the user.
+     - `password`: Password for the user.
+     - `dateOfBirth`: Date of birth.
+     - `createdAt`: Timestamp of user creation.
+     - `userImageUrl`: URL of the user's profile image (optional).
+
+2. **Group Entity**
+
+   - **PK:** `GROUP#{groupId}`
+   - **SK:** `"METADATA"`
+   - **Attributes:**
+     - `groupId`: Unique identifier for the group.
+     - `groupName`: Name of the group.
+     - `createdAt`: Timestamp of group creation.
+     - `emoticon`: Icon representing the group.
+     - `lastMessageAt`: Timestamp of the last message in the group (optional).
+
+3. **UserGroup Relationship Entity**
+
+   - **PK:** `USER#{userId}`
+   - **SK:** `GROUP#{groupId}`
+   - **Attributes:**
+     - `userId`: Unique identifier for the user.
+     - `groupId`: Unique identifier for the group.
+     - `joinedAt`: Timestamp of when the user joined the group.
+
+4. **Thread Entity**
+
+   - **PK:** `GROUP#{groupId}`
+   - **SK:** `THREAD#{threadId}`
+   - **Attributes:**
+     - `threadId`: Unique identifier for the thread.
+     - `groupId`: Unique identifier for the group.
+     - `threadName`: Name of the thread.
+     - `createdAt`: Timestamp of thread creation.
+     - `lastMessageAt`: Timestamp of the last message in the thread (optional).
+     - `color`: Color associated with the thread.
+
+5. **Message Entity**
+   - **PK:** `THREAD#{threadId}`
+   - **SK:** `MESSAGE#{messageId}`
+   - **Attributes:**
+     - `messageId`: Unique identifier for the message.
+     - `content`: Content of the message.
+     - `senderUserId`: ID of the user who sent the message.
+     - `createdAt`: Timestamp of message creation.
+     - `GSI1PK`: `GROUP#{groupId}` (used in GSI1).
+     - `GSI1SK`: `THREAD#{threadId}#MESSAGE#{messageId}` (used in GSI1).
+
+### Global Secondary Indexes (GSIs)
+
+The table includes the following GSIs to optimize queries:
+
+1. **GSI1** (Group ID and Thread ID Index)
+
+   - **Partition Key:** `GSI1PK` (`GROUP#{groupId}`)
+   - **Sort Key:** `GSI1SK` (`THREAD#{threadId}#MESSAGE#{messageId}`)
+   - **Use Case:** Efficient querying of messages by group and thread.
+
+2. **GSI_PK_wwsId** (WebSocket Connection ID Index)
+
+   - **Partition Key:** `wwsId`
+   - **Use Case:** Query users based on their WebSocket connection ID.
+
+3. **GSI_PK_email** (Email Index)
+
+   - **Partition Key:** `email`
+   - **Use Case:** Query users based on their email address.
+
+4. **GSI_PK_SK_SK_PK** (Inverse Index)
+   - **Partition Key:** `sk`
+   - **Sort Key:** `pk`
+   - **Use Case:** Query relationships between users and groups.
+
+### Local Secondary Indexes (LSIs)
+
+The table also includes the following LSIs:
+
+1. **LSI_createdAt** (Message Creation Time Index)
+
+   - **Sort Key:** `createdAt`
+   - **Use Case:** Retrieve messages in a thread ordered by their creation time.
+
+2. **LSI_lastMessageAt** (Thread Last Message Time Index)
+   - **Sort Key:** `lastMessageAt`
+   - **Use Case:** Retrieve threads in a group ordered by the time of the last message.
+
+### Entity Relationships
+
+Below is a visual representation of the relationships between entities using text-based diagrams.
+
+- **User to Group Relationship:**
+
+  - Many-to-many relationship facilitated by the `UserGroup` entity.
+
+- **Group to Thread Relationship:**
+
+  - One-to-many relationship between groups and threads.
+
+- **Thread to Message Relationship:**
+  - One-to-many relationship between threads and messages.
+
+### Reasons
+
+As illustrated by the relationship, the many-to-many relationship presents several best practices, such as those outlined in the DynamoDB benchmark template. However, I did not strictly adhere to best practices when designing the table due to the strong logical coupling between these four entities.
+
+If only two entities were coupled, best practices might have been more applicable. But in the case of the **GROUP** entity, which has a many-to-many relationship with **USER** while also maintaining a one-to-many relationship with **Thread**, the complexity increases significantly. After manually simulating different designs in DynamoDB Bench for 8 hours, I was unable to find an efficient and usable design for three entities.
+
+To address this, I created an abstract entity, **USERGROUPS**, specifically to map the many-to-many relationship between **USERS** and **GROUPS**. This approach draws from some relational database design principles, allowing us to treat other one-to-many relationships in a more single-table design-oriented manner.
+
+However, I must acknowledge that this design is still far from best practices.
