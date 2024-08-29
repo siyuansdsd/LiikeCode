@@ -227,7 +227,7 @@ export const createApiGateWay = (stack: Cdk.Stack) => {
     threshold: 1000, // 1000 connections
     evaluationPeriods: 1,
     comparisonOperator: cloudwatch.ComparisonOperator.GREATER_THAN_THRESHOLD,
-    alarmDescription: "Alarm when connect count is greater than 1",
+    alarmDescription: "Alarm when connect count is greater than 1000",
   });
 
   new cloudwatch.Alarm(stack, "wssDisconnectCountAlarm", {
@@ -235,7 +235,7 @@ export const createApiGateWay = (stack: Cdk.Stack) => {
     threshold: 1000, // 1000 connections
     evaluationPeriods: 1,
     comparisonOperator: cloudwatch.ComparisonOperator.GREATER_THAN_THRESHOLD,
-    alarmDescription: "Alarm when disconnect count is greater than 1",
+    alarmDescription: "Alarm when disconnect count is greater than 1000",
   });
 
   new cloudwatch.Alarm(stack, "wssMessageCountAlarm", {
@@ -243,6 +243,15 @@ export const createApiGateWay = (stack: Cdk.Stack) => {
     threshold: 10000, // 10000 messages
     evaluationPeriods: 1,
     comparisonOperator: cloudwatch.ComparisonOperator.GREATER_THAN_THRESHOLD,
-    alarmDescription: "Alarm when message count is less than 1",
+    alarmDescription: "Alarm when message count is greater than 10000",
+  });
+
+  new cloudwatch.Alarm(stack, "wssMessageFailedCountAlarm", {
+    metric: websocketApi.metric("MessageFailedCount"),
+    threshold: 100, // 1000 failed messages
+    evaluationPeriods: 1,
+    comparisonOperator:
+      cloudwatch.ComparisonOperator.GREATER_THAN_OR_EQUAL_TO_THRESHOLD,
+    alarmDescription: "Alarm when failed message count is >= 100",
   });
 };
