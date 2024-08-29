@@ -5,6 +5,7 @@ import {
   GetCommandInput,
   DeleteCommandInput,
   QueryCommandInput,
+  ScanCommandInput,
 } from "@aws-sdk/lib-dynamodb";
 import { v4 as uuidv4 } from "uuid";
 import DynamoDB from "../dynamoDB/dynamoDB";
@@ -75,16 +76,40 @@ export const getUser = async (userId: string): Promise<UserServicesOutput> => {
   return result;
 };
 
-export const getUsers = async (): Promise<UserServicesOutput> => {
+export const getUserByEmail = async (
+  email: string
+): Promise<UserServicesOutput> => {
   const params: QueryCommandInput = {
     TableName: process.env.CHAT_TABLE!,
-    KeyConditionExpression: "sk = :sk AND begins_with(pk, :pk)",
+    IndexName: "GSI-PK:EMAIL",
+    KeyConditionExpression: "email = :email",
+    ExpressionAttributeValues: {
+      ":email": { S: email },
+    },
+  };
+  const response = await dynamoDB.dbQuery(params);
+  const result: UserServicesOutput = {
+    statusCode: response.statusCode,
+  };
+  if (response.statusCode === 500) {
+    result.errorMessage = response.errorMessage;
+  }
+  if (response.Items) {
+    result.user = userFromItem(response.Items[0] as Record<string, any>);
+  }
+  return result;
+};
+
+export const getUsers = async (): Promise<UserServicesOutput> => {
+  const params: ScanCommandInput = {
+    TableName: process.env.CHAT_TABLE!,
+    FilterExpression: "sk = :sk AND begins_with(pk, :pk)",
     ExpressionAttributeValues: {
       ":sk": { S: "PROFILE" },
       ":pk": { S: "USER#" },
     },
   };
-  const response = await dynamoDB.dbQuery(params);
+  const response = await dynamoDB.dbScan(params);
   const result: UserServicesOutput = {
     statusCode: response.statusCode,
   };
