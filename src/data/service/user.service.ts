@@ -76,6 +76,30 @@ export const getUser = async (userId: string): Promise<UserServicesOutput> => {
   return result;
 };
 
+export const getUserByWssId = async (
+  connectId: string
+): Promise<UserServicesOutput> => {
+  const params: QueryCommandInput = {
+    TableName: process.env.CHAT_TABLE!,
+    IndexName: "GSI-PK:wwsId",
+    KeyConditionExpression: "pk = :wwsId",
+    ExpressionAttributeValues: {
+      ":wssId": { S: connectId },
+    },
+  };
+  const response = await dynamoDB.dbQuery(params);
+  const result: UserServicesOutput = {
+    statusCode: response.statusCode,
+  };
+  if (response.statusCode === 500) {
+    result.errorMessage = response.errorMessage;
+  }
+  if (response.Items) {
+    result.user = userFromItem(response.Items[0] as Record<string, any>);
+  }
+  return result;
+};
+
 export const getUserByEmail = async (
   email: string
 ): Promise<UserServicesOutput> => {

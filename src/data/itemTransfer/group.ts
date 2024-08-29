@@ -18,6 +18,7 @@ export const groupFromItem = (item: Record<string, any>): Group => {
     groupId: item.groupId as string,
     groupName: item.groupName as string,
     emoticon: item.emoticon as string,
+    lastMessageAt: item.lastMessageAt as number | undefined,
     createdAt: Number(item.createdAt),
   };
 };
@@ -29,6 +30,9 @@ export const groupToItem = (group: Group): Record<string, unknown> => {
     groupId: { S: group.groupId },
     groupName: { S: group.groupName },
     emoticon: { S: group.emoticon },
+    lastMessageAt: group.lastMessageAt
+      ? { N: group.lastMessageAt.toString() }
+      : undefined,
     createdAt: { N: group.createdAt.toString() },
   };
 };

@@ -26,7 +26,7 @@ export interface Group extends DynamoDBItem {
   groupName: string;
   createdAt: number;
   emoticon: string;
-  lastMessageAt?: string;
+  lastMessageAt?: number;
 }
 
 // UserGroup relationship interface（ N to N User-Group relationship）
